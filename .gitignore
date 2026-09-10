@@ -1,0 +1,50 @@
+# --- Gradle ---
+# Gradle cache folders; the README commands use a project-local user home and tmpdir
+.gradle
+.gradle-user-home
+.gradle-tmp
+
+# Gradle build output and the JAR staged for a local Paper/Purpur server
+build
+plugins
+
+# --- IDE ---
+out/
+.idea
+*.iml
+# mpeltonen/sbt-idea plugin
+.idea_modules/
+.vscode/
+
+# --- JVM crash logs and heap dumps ---
+# see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+*.hprof
+
+# --- Local server runs ---
+# Paper/Purpur working directory and its logs
+run
+logs/
+*.log
+
+# --- Tooling output ---
+# Playwright CLI session captures (.playwright-cli/console-*.log, page-*.yml)
+.playwright-cli/
+# Qodana local analysis output
+.qodana/
+qodana.sarif.json
+
+# --- Secrets ---
+# Never commit OAuth secrets or real deployment URLs (see AGENTS.md). The client
+# secret belongs in the SCHOOL_BEDROCK_OAUTH_SECRET environment variable.
+.env
+!.env.example
+
+# --- OS files ---
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+desktop.ini

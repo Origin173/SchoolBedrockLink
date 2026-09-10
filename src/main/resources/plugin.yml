@@ -1,0 +1,22 @@
+name: SchoolBedrockLink
+description: '${description}'
+version: '${version}'
+
+main: com.origin173.schoolBedrockLink.SchoolBedrockLink
+api-version: '26.2'
+load: POSTWORLD
+
+authors: [ Origin173 ]
+website: https://example.invalid/SchoolBedrockLink
+softdepend: [ floodgate ]
+
+commands:
+  schoollink:
+    description: Manage SchoolBedrockLink
+    usage: /schoollink <status|unlink|reload>
+    permission: schoolbedrocklink.admin
+
+permissions:
+  schoolbedrocklink.admin:
+    description: Manage SchoolBedrockLink links and configuration
+    default: op
