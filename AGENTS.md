@@ -26,6 +26,8 @@ Use Java 25 and the Gradle Wrapper:
 
 For changes to `http/` HTML flows or CSP, verify in a real browser: `.\gradlew.bat browserFixture` runs the production handlers under Chromium with a simulated provider, and `node docs/csp-probe.cjs` demonstrates the `form-action` regression. curl/302 checks alone are not sufficient evidence (see `docs/review-2026-09-09.md`).
 
+Pushing a `v<major>.<minor>.<patch>` tag triggers `.github/workflows/release.yml`, which builds with `-Pversion=<tag without the leading v>` (the build reads the version from that Gradle property and falls back to the value in `build.gradle.kts`) and publishes a GitHub Release carrying the shaded JAR. The release body comes from `.github/scripts/changelog.sh`, which groups the commits between the previous tag and the new one by conventional-commit prefix and adds compare/commit links, so keep writing `feat:`/`fix:`/`docs:` style subjects. The workflow can also be dispatched manually from `master`. See the README 发布 section.
+
 ## Docs to Read Before Sensitive Changes
 
 `docs/acceptance.md` is the manual acceptance checklist (in Chinese) — update it whenever manual verification behavior changes. `docs/review-2026-09-09.md` records confirmed defects and their regression evidence. `docs/nginx.example.conf` shows the required reverse-proxy setup (Nginx overwrites XFF; only loopback peers with a single literal address are trusted).
@@ -42,4 +44,4 @@ Tests use JUnit Jupiter and are named after behavior, for example `expiredAndRep
 
 Never commit OAuth secrets, tokens, or real deployment URLs. Use `SCHOOL_BEDROCK_OAUTH_SECRET` for the client secret and preserve HTTPS/redirect-URI validation. Changes to linking or OAuth must retain fail-closed behavior and update `docs/acceptance.md` when manual verification changes.
 
-There is no Git history yet, so no established commit convention exists. Use concise imperative subjects with a conventional prefix such as `fix:`, `feat:`, or `docs:`. Pull requests should explain behavior and security impact, list tests run, call out config/deployment changes, link an issue when applicable, and include screenshots for web UI changes.
+Commits use concise imperative subjects with a conventional prefix such as `fix:`, `feat:`, or `docs:`; the release changelog generator parses those prefixes, so an unprefixed subject ends up under 其他改动. Pull requests should explain behavior and security impact, list tests run, call out config/deployment changes, link an issue when applicable, and include screenshots for web UI changes.

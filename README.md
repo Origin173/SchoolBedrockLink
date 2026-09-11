@@ -255,6 +255,32 @@ reload 直接读取服务器 plugins/SchoolBedrockLink/config.yml，验证成功
 build/libs/SchoolBedrockLink-0.1.0.jar
 ~~~
 
+版本号默认取 `build.gradle.kts` 中的值，可以用 `-Pversion` 覆盖，例如
+`.\gradlew.bat clean build -Pversion=0.2.0` 会产出 `SchoolBedrockLink-0.2.0.jar`，
+并把同一个版本号写进 `plugin.yml`。
+
+## 发布
+
+发布由 `.github/workflows/release.yml` 自动完成，不需要手工上传产物：
+
+1. 在 `master` 上确认测试通过后打标签：`git tag v0.2.0 && git push origin v0.2.0`。
+   标签必须是 `v<major>.<minor>.<patch>` 形式。
+2. 工作流用标签去掉 `v` 前缀后的版本号执行
+   `./gradlew clean test build -Pversion=<版本号>`，并校验 jar 内 `plugin.yml` 的版本号一致。
+3. 更新日志由 `.github/scripts/changelog.sh` 自动生成：取上一个标签到本次标签之间的提交，
+   按 `feat`、`fix`、`perf`、`docs`、`ci` 等 conventional commit 前缀分组，并附比较链接与
+   提交链接。版本号带 `-`（如 `v0.2.0-rc1`）会自动发布为 Pre-release。
+4. 发布产物为 `SchoolBedrockLink-<版本号>.jar`，同时作为 workflow artifact 保留一份。
+
+也可以在 GitHub Actions 页面手动触发 Release 工作流（必须从 `master` 触发），
+填写版本号后由工作流创建标签。
+
+本地预览某个区间的更新日志：
+
+~~~bash
+bash .github/scripts/changelog.sh v0.2.0 v0.1.0
+~~~
+
 ## 官方资料
 
 - [Paper 项目配置](https://docs.papermc.io/paper/dev/project-setup/)

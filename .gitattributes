@@ -4,6 +4,9 @@
 # Linux start script should use lf
 /gradlew        text eol=lf
 
+# Shell scripts (including the release changelog generator) must stay lf
+*.sh            text eol=lf
+
 # These are Windows script files and should use crlf
 *.bat           text eol=crlf
 

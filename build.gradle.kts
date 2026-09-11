@@ -29,7 +29,8 @@ java {
 }
 
 group = "com.origin173"
-version = "0.1.0"
+// 发布工作流用 -Pversion=<tag 去掉 v 前缀> 覆盖；本地构建沿用默认版本
+version = providers.gradleProperty("version").getOrElse("0.1.0")
 description = "School Bedrock to Java profile linking for Paper 26.2"
 
 tasks {
