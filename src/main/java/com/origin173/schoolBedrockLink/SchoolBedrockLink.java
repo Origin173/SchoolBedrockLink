@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import org.bukkit.Bukkit;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,10 +75,11 @@ public final class SchoolBedrockLink extends JavaPlugin {
         httpServer = new EmbeddedHttpServer(webContext);
 
         getServer().getPluginManager().registerEvents(new PreLoginListener(this, floodgate, links, pending), this);
-        if (getCommand("schoollink") != null) {
+        PluginCommand schoolLink = getCommand("schoollink");
+        if (schoolLink != null) {
             SchoolLinkCommand command = new SchoolLinkCommand(this);
-            getCommand("schoollink").setExecutor(command);
-            getCommand("schoollink").setTabCompleter(command);
+            schoolLink.setExecutor(command);
+            schoolLink.setTabCompleter(command);
         }
 
         try {
