@@ -52,18 +52,22 @@ rate-limit:
   oauth-start-per-code: 5
 
 messages:
+  # {link} is the complete URL incl. the code: opening it starts OAuth directly, so the
+  # player never retypes the code. {url} + {code} stay available as the manual fallback
+  # for clients that render the disconnect screen without tappable links.
   unlinked: |
     §e校园 Minecraft 身份认证
 
     §f你的 Xbox 账号还没有绑定学校 Minecraft 账号。
 
-    §f请打开：
-    §b{url}
+    §f点开这个链接就能直接认证：
+    §b{link}
 
+    §f如果不能点击，请打开 §b{url}
     §f认证码：
     §a{code}
 
-    §7验证码 {minutes} 分钟内有效。
+    §7认证码 {minutes} 分钟内有效。
     §7认证完成以后重新进入服务器。
   repaired: |
     §a账号绑定已经自动修复。

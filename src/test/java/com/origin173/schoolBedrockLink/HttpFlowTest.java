@@ -84,7 +84,10 @@ class HttpFlowTest {
             assertEquals(200, home.statusCode());
             assertTrue(home.body().contains("action=\"/auth/start\""));
             assertTrue(home.headers().firstValue("Content-Security-Policy").orElseThrow().contains(origin));
-            URI start = URI.create(publicUrl + "/auth/start?code=" + code.bindingCode());
+            // The exact URL the unlinked kick message hands out must start OAuth on its own.
+            assertEquals(publicUrl + "/auth/start?code=" + code.bindingCode(),
+                    config.http().startUrl(code.bindingCode()));
+            URI start = URI.create(config.http().startUrl(code.bindingCode()));
             var redirect = client.send(HttpRequest.newBuilder(start).build(), HttpResponse.BodyHandlers.ofString());
             assertEquals(302, redirect.statusCode());
             URI location = URI.create(redirect.headers().firstValue("Location").orElseThrow());
