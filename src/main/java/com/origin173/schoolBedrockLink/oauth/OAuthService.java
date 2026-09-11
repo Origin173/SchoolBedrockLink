@@ -115,8 +115,6 @@ public final class OAuthService {
     private LimitedHttpResponse.Response send(HttpRequest request) throws OAuthException {
         try {
             return LimitedHttpResponse.send(httpClient, request, MAX_RESPONSE_BYTES);
-        } catch (OAuthException exception) {
-            throw exception;
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw new OAuthException("OAuth request interrupted", exception);

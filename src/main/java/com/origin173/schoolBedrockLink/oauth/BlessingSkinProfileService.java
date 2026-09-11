@@ -337,8 +337,6 @@ public final class BlessingSkinProfileService {
     private LimitedHttpResponse.Response send(HttpRequest request) {
         try {
             return LimitedHttpResponse.send(httpClient, request, MAX_RESPONSE_BYTES);
-        } catch (ProfileException exception) {
-            throw exception;
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw new ProfileException(Kind.NETWORK, "Blessing Skin API request interrupted", exception);

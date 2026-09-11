@@ -90,8 +90,8 @@ public final class WebContext {
 
     public boolean allowOAuthStart(String code) {
         PluginConfig current = config();
-        return !current.rateLimit().enabled()
-                || (code != null && oauthStartLimiter.tryAcquire(code));
+        // tryAcquire rejects a null or blank key, so no separate null guard is needed here.
+        return !current.rateLimit().enabled() || oauthStartLimiter.tryAcquire(code);
     }
 
     public void updateLimiters() {

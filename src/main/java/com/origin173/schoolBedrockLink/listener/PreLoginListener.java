@@ -89,10 +89,11 @@ public final class PreLoginListener implements Listener {
     private String unlinkedMessage(PluginConfig config, PendingLink request) {
         long seconds = Math.max(1L, Duration.between(Instant.now(), request.expiresAt()).toSeconds());
         long minutes = Math.max(1L, (seconds + 59L) / 60L);
-        return config.messages().unlinked()
-                .replace("{code}", request.bindingCode())
-                .replace("{minutes}", Long.toString(minutes))
-                .replace("{url}", config.http().publicBaseUrl());
+        return config.messages().unlinked(
+                config.http().publicBaseUrl(),
+                config.http().startUrl(request.bindingCode()),
+                request.bindingCode(),
+                minutes);
     }
 
     private void logUnavailableOnce() {

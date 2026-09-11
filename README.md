@@ -213,6 +213,8 @@ GET  /healthz           返回组件布尔状态，不返回用户、Token 或 S
 
 页面使用 no-store、CSP、禁止 iframe、HTML escape 和内存限流。默认每 IP 每分钟 30 次，同一绑定码每 5 分钟最多开始 5 次 OAuth。
 
+游戏内 Kick 消息给出的是完整的 `/start?code=...` 链接（消息模板里的 `{link}`），玩家打开后直接进入 OAuth，不需要再输入认证码；`{url}` + `{code}` 作为手动回退一直保留，两者走同一个 handler。因为认证码会出现在 URL 查询串里，该路径的反代访问日志必须关闭或脱敏，浏览器历史也会记录该链接。
+
 ## 管理命令
 
 需要 schoolbedrocklink.admin（默认 OP）：
@@ -294,6 +296,8 @@ bash .github/scripts/changelog.sh v0.2.0 v0.1.0
 ## 多设备部署与跳转排查
 
 http.bind-address 是服务器内部监听地址，http.public-base-url 是玩家浏览器访问地址。服务器本机可用的 127.0.0.1/localhost 指向玩家自己的设备，不能发给其他玩家。生产使用可达的 HTTPS 域名；开发 HTTP loopback 仅用于同机测试。游戏中显示的地址、反代入口和 OAuth 应用配置需要根据真实环境核对。
+
+游戏内显示的 {link} 由 public-base-url 加 /start?code=... 组成，因此它必须与反代入口一致，玩家点击后才落到同一个 handler。该链接自带认证码：请保持此路径访问日志关闭或脱敏，也不要把含查询串的完整链接转发给第三方或贴进工单。玩家如果手动输入 public-base-url，仍可在首页输入认证码完成同样的流程；若线上只想让玩家看到短地址，可以把 config.yml 的 messages.unlinked 改成只给 {url} 与 {code}。
 
 public-base-url 可以是 https://mc-auth.example.edu/auth。首页 /auth/、表单 /auth/start 与 /auth/confirm、回调 /auth/oauth/callback 会保持前缀。反代必须保留此路径，不能用 proxy_pass 的尾随 / 去除前缀；前缀仅允许字母、数字、下划线和短横线组成的路径段。OAuth 后台注册的 redirect_uri 必须与 public-base-url 去除尾部斜杠后加 /oauth/callback 逐字一致，包含协议、域名、端口和大小写。
 

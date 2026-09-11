@@ -138,8 +138,12 @@ public final class HtmlPages {
                 + "<p>请输入游戏内显示的认证码，然后使用学校皮肤站完成认证。</p>"
                 + "<form action=\"" + HtmlEscaper.escape(startAction) + "\" method=\"get\">"
                 + "<label for=\"code\">认证码</label>"
-                + "<input id=\"code\" name=\"code\" maxlength=\"32\" minlength=\"8\" "
-                + "pattern=\"[0-9A-HJKMNP-TV-Za-hjkmnp-tv-z]{8,32}\" autocomplete=\"off\" required autofocus>"
+                + "<input id=\"code\" name=\"code\" maxlength=\"40\" minlength=\"8\" "
+                // The pattern is compiled with the regexp `v` flag, where `-` is a reserved
+                // punctuator: left unescaped it makes the whole pattern invalid, the attribute is
+                // silently ignored, and browser-side validation disappears without any visible
+                // error. Keep the dash escaped and this list in sync with PendingLinkService.normalize.
+                + "pattern=\"[0-9A-HJKMNP-TV-Za-hjkmnp-tv-zOoIiLl \\-]{8,40}\" autocomplete=\"off\" required autofocus>"
                 + "<button type=\"submit\">开始认证</button>"
                 + "</form>");
     }

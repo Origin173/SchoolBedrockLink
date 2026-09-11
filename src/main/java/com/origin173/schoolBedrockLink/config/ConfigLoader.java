@@ -146,7 +146,7 @@ public final class ConfigLoader {
         if (!publicBaseUrl.isBlank() && !publicBaseUrl.startsWith("https://")) {
             logger.warning("http.public-base-url is not HTTPS; use HTTPS in production and an HTTPS OAuth redirect URI.");
         }
-        if (clientSecret == null || clientSecret.isBlank()) {
+        if (clientSecret.isBlank()) {
             logger.warning("OAuth is NOT READY: client secret environment variable is missing.");
         }
 

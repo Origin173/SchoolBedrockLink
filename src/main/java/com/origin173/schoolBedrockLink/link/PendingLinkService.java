@@ -72,11 +72,29 @@ public final class PendingLinkService {
         pending.clear();
     }
 
+    /**
+     * Canonicalises a typed code. Codes are Crockford Base32, so the letters {@code I}, {@code L}
+     * and {@code O} never occur in a real code and can be folded onto the digit the player most
+     * likely meant; grouping separators are dropped for the same reason. This only widens what is
+     * accepted as input — it can never make one player's code collide with another's.
+     */
     public static String normalize(String rawCode) {
         if (rawCode == null) {
             return null;
         }
-        String code = rawCode.trim().toUpperCase(Locale.ROOT);
+        String upper = rawCode.trim().toUpperCase(Locale.ROOT);
+        StringBuilder canonical = new StringBuilder(upper.length());
+        for (int index = 0; index < upper.length(); index++) {
+            char character = upper.charAt(index);
+            switch (character) {
+                case '-', '_', ' ', '\t' -> {
+                }
+                case 'O' -> canonical.append('0');
+                case 'I', 'L' -> canonical.append('1');
+                default -> canonical.append(character);
+            }
+        }
+        String code = canonical.toString();
         if (code.length() < 8 || code.length() > 32 || !code.matches(CODE_PATTERN)) {
             return null;
         }

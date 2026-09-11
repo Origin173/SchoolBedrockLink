@@ -40,16 +40,24 @@
 ## 未认证 Bedrock
 
 1. 使用没有 Approved Record 的 Bedrock/Xbox 测试账号进入服务器。
-2. 预期：AsyncPlayerPreLoginEvent 拒绝本次连接，Kick 显示配置长度的认证码与剩余分钟数（默认 300 秒）；玩家不能进入世界。
+2. 预期：AsyncPlayerPreLoginEvent 拒绝本次连接，Kick 显示完整的一键链接（含认证码）、配置长度的认证码与剩余分钟数（默认 300 秒）；玩家不能进入世界。
 3. 未过期时断开再进入，预期：同一个 XUID 复用原码，截止时间不后移。300 秒的码在创建后 59 秒仍有效、300 秒时失效。
 4. 如果 Floodgate 显示已有 Global Link，但 Registry 没有记录，预期仍然拒绝并要求学校 OAuth。
 5. 若 Registry 损坏或 Floodgate/PlayerLink 不可用，预期 Bedrock fail closed，Java 仍可按原流程登录。
 
 失败先查：Floodgate API、approved-links.json 健康状态、HTTP Server 状态；不要用 /linkaccount 作为测试方案。
 
+## 一键链接与认证码输入
+
+1. Kick 消息中的 {link} 形如 `<public-base-url>/start?code=<认证码>`。在浏览器中打开该地址，预期直接 302 到皮肤站登录页，不需要在页面上再输入认证码；流程与手动输入完全一致（同一 /start handler）。
+2. 手动路径保留：打开 public-base-url 输入认证码并提交，结果应与打开 {link} 相同。console 是否可点在客户端一侧决定：Java 与原版断开界面不解析点击事件，Bedrock 需实机确认，因此 {url} + {code} 的手动回退必须一直可用。
+3. 认证码输入框的浏览器端校验必须生效：F12 控制台不得出现 `Pattern attribute value ... is not a valid regular expression`。该 pattern 按 v 模式编译，`-` 必须转义为 `\-`，否则整个 pattern 会被静默忽略、校验消失且没有可见报错。失配时应阻止提交并提示格式错误。
+4. 容错输入应符合服务端归一化：大小写、`-`/空格分隔、Crockford 易混字符 O→0 与 I/L→1 都应被接受并绑定成功；`U` 等不属于字母表的字符应被拒绝。
+5. 认证码现在会出现在 URL 查询串中，因此该路径的反代访问日志必须关闭或脱敏（见 docs/nginx.example.conf 与 README 的多设备排查章节）。浏览器地址栏历史也会留下该链接，属于本设计的已知取舍。
+
 ## Blessing Skin OAuth、PKCE 和角色
 
-1. 打开配置中的 public-base-url，输入游戏内认证码并提交。
+1. 打开配置中的 public-base-url，输入游戏内认证码并提交（或直接打开 Kick 消息里的 {link}）。
 2. 预期：/start 只在 code 有效时跳转配置的 Blessing Skin authorization-url；授权请求包含 response_type=code、state、code_challenge 和 code_challenge_method=S256。
 3. 在 Blessing Skin 正常登录并授权，预期返回配置中的 /oauth/callback。
 4. 预期：插件用一次性 Authorization Code 换取短期 Access Token，然后：
